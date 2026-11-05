@@ -1,0 +1,3 @@
+*.tmp
+*.danado-*
+node_modules/

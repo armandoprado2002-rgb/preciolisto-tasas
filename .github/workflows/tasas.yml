@@ -1,0 +1,50 @@
+# PrecioListo — Servidor de tasas.
+# Cada hora consulta El Toque, valida la tasa, guarda el historial y publica
+# tasa.json / historial-N.json en la carpeta publico/ del repo público.
+# Se leen en https://raw.githubusercontent.com/<usuario>/preciolisto-tasas/main/servidor-tasas/publico/tasa.json
+# El token está en Settings > Secrets and variables > Actions > ELTOQUE_TOKEN.
+
+name: Tasas
+
+on:
+  schedule:
+    - cron: '17 * * * *'   # cada hora en el minuto 17 (evita la congestión de :00)
+  workflow_dispatch: {}    # botón "Run workflow" para probar a mano
+
+permissions:
+  contents: write   # guardar estado e historial en el repo
+
+concurrency:
+  group: tasas
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: servidor-tasas
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Pruebas
+        run: npm test
+
+      - name: Consultar El Toque y publicar
+        env:
+          ELTOQUE_TOKEN: ${{ secrets.ELTOQUE_TOKEN }}
+        run: npm run actualizar
+
+      - name: Guardar estado e historial
+        run: |
+          git config user.name "preciolisto-bot"
+          git config user.email "preciolisto-bot@users.noreply.github.com"
+          git add datos publico
+          git diff --cached --quiet || git commit -m "Tasas $(date -u +%FT%TZ)"
+          git push
+

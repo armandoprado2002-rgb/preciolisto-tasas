@@ -1,0 +1,14 @@
+{
+  "name": "preciolisto-servidor-tasas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Servidor de tasas de PrecioListo (sin dependencias externas).",
+  "author": "Armando Prado",
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "actualizar": "node src/actualizar.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}
