@@ -9,6 +9,7 @@ name: Tasas
 on:
   schedule:
     - cron: '17 * * * *'   # cada hora en el minuto 17 (evita la congestión de :00)
+    - cron: '47 * * * *'   # segunda consulta por si GitHub se salta la primera
   workflow_dispatch: {}    # botón "Run workflow" para probar a mano
 
 permissions:

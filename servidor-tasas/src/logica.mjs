@@ -14,7 +14,7 @@ export const CONFIG = {
   horasDesactualizada: 3,     // sin consulta buena en 3 h => "desactualizada"
   minimoValido: 1,            // límites de cordura para descartar basura
   maximoValido: 100000,
-  maxConsultasDia: 48,        // tope diario de llamadas a El Toque
+  maxConsultasDia: 60,        // tope diario de llamadas a El Toque
   diasHistorial: 400,
 };
 
