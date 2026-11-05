@@ -9,7 +9,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   CONFIG, estadoInicial, leerRespuestaElToque, registrarConsulta, procesarTasas,
-  registrarFallo, construirTasa, actualizarHistorial, historialDias,
+  registrarFallo, construirTasa, actualizarHistorial, historialDias, tocaConsultar,
 } from './logica.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -67,6 +67,11 @@ export async function ejecutar({ token = process.env.ELTOQUE_TOKEN, ahora = new 
   let estado = await leerJSON(rutaEstado, estadoInicial());
   let historial = await leerJSON(rutaHist, []);
   let resultado;
+
+  if (!tocaConsultar(estado, ahora, CONFIG, process.env.FORZAR === '1')) {
+    console.log('Resultado: espera (la última consulta es reciente)');
+    return { resultado: 'espera', estado, tasa: construirTasa(estado, ahora, CONFIG) };
+  }
 
   if (!token) {
     estado = registrarFallo(estado, 'Falta el token de El Toque (ELTOQUE_TOKEN).', ahora);

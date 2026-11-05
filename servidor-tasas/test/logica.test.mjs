@@ -4,7 +4,7 @@ import { mkdtemp, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
-  estadoInicial, leerRespuestaElToque, procesarTasas, construirTasa,
+  tocaConsultar, estadoInicial, leerRespuestaElToque, procesarTasas, construirTasa,
   registrarConsulta, actualizarHistorial, historialDias, fechaCuba, CONFIG,
 } from '../src/logica.mjs';
 
@@ -122,4 +122,13 @@ test('ejecución completa: escribe archivos, sobrevive a fallos y a datos dañad
 
   const h30 = JSON.parse(await readFile(join(dir, 'publico', 'historial-30.json'), 'utf8'));
   assert.equal(h30.datos[0].usd, 460);
+});
+
+test('no consulta más seguido que cada 25 min, salvo a mano o con problemas', () => {
+  const e = procesarTasas(estadoInicial(), { usd: 455, eur: 500, mlc: 280 }, t('2026-11-05T10:00:00Z')).estado;
+  assert.equal(tocaConsultar(e, t('2026-11-05T10:15:00Z')), false);
+  assert.equal(tocaConsultar(e, t('2026-11-05T10:26:00Z')), true);
+  assert.equal(tocaConsultar(e, t('2026-11-05T10:05:00Z'), CONFIG, true), true, 'a mano siempre');
+  assert.equal(tocaConsultar({ ...e, ultimo_error: 'caído' }, t('2026-11-05T10:05:00Z')), true, 'si falló, reintenta');
+  assert.equal(tocaConsultar(estadoInicial(), t('2026-11-05T10:05:00Z')), true);
 });

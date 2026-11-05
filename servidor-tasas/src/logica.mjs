@@ -14,7 +14,8 @@ export const CONFIG = {
   horasDesactualizada: 3,     // sin consulta buena en 3 h => "desactualizada"
   minimoValido: 1,            // límites de cordura para descartar basura
   maximoValido: 100000,
-  maxConsultasDia: 60,        // tope diario de llamadas a El Toque
+  maxConsultasDia: 100,       // tope diario de llamadas a El Toque
+  minutosEntreConsultas: 25,  // no consultar más seguido que esto (salvo a mano)
   diasHistorial: 400,
 };
 
@@ -150,4 +151,11 @@ export function actualizarHistorial(historial, estado, config = CONFIG) {
 export function historialDias(historial, dias) {
   const n = Math.max(1, Math.min(365, Math.floor(Number(dias)) || 30));
   return { dias: n, aviso: AVISO, datos: historial.slice(0, n) };
+}
+
+/** ¿Toca consultar ya? Evita gastar consultas cuando GitHub despierta al robot muy seguido. */
+export function tocaConsultar(estado, ahora, config = CONFIG, forzar = false) {
+  if (forzar || !estado.publicada || estado.ultimo_error || estado.pendiente) return true;
+  const ultima = new Date(estado.ultimo_intento || estado.publicada.actualizado_en);
+  return (ahora - ultima) / 60000 >= config.minutosEntreConsultas;
 }
