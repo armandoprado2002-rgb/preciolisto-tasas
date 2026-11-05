@@ -1,4 +1,4 @@
-# PrecioListo — Servidor de tasas.
+# PrecioListo — Servidor de tasas. 
 # Cada hora consulta El Toque, valida la tasa, guarda el historial y publica
 # tasa.json / historial-N.json en la carpeta publico/ del repo público.
 # Se leen en https://raw.githubusercontent.com/<usuario>/preciolisto-tasas/main/servidor-tasas/publico/tasa.json
