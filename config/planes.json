@@ -1,0 +1,7 @@
+{
+  "_ayuda": "Edita este archivo en GitHub para cambiar precios y datos de pago. La app lo lee cuando hay internet. Precios en CUP por mes.",
+  "precios": { "basico": 0, "negocio": 0, "completo": 0 },
+  "transfermovil": "[TU NÚMERO DE TARJETA O TELÉFONO PARA TRANSFERMÓVIL]",
+  "whatsapp": "",
+  "telegram": ""
+}
