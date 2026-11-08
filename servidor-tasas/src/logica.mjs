@@ -11,7 +11,7 @@ const CLAVE_ELTOQUE = { usd: 'USD', eur: 'ECU', mlc: 'MLC' };
 export const CONFIG = {
   saltoMaximo: 0.15,          // >15 % de golpe => esperar confirmación
   toleranciaConfirmacion: 0.03, // la siguiente consulta debe estar a ±3 % del valor pendiente
-  horasDesactualizada: 3,     // sin consulta buena en 3 h => "desactualizada"
+  horasDesactualizada: 12,    // sin consulta buena en 12 h => "desactualizada" (GitHub lanza el robot cada pocas horas)
   minimoValido: 1,            // límites de cordura para descartar basura
   maximoValido: 100000,
   maxConsultasDia: 100,       // tope diario de llamadas a El Toque

@@ -55,11 +55,11 @@ test('cambio pequeño se publica directo (15 % justo no cuenta como salto)', () 
   assert.equal(procesarTasas(e, { usd: 460, eur: 400, mlc: 200 }, t('2026-11-02T11:00:00Z')).accion, 'publicada');
 });
 
-test('marca desactualizada después de 3 horas y nunca devuelve vacío', () => {
+test('marca desactualizada después de 12 horas y nunca devuelve vacío', () => {
   assert.equal(construirTasa(estadoInicial(), new Date()), null);
   const e = procesarTasas(estadoInicial(), { usd: 455, eur: 500, mlc: 280 }, t('2026-11-02T10:00:00Z')).estado;
-  assert.equal(construirTasa(e, t('2026-11-02T12:59:00Z')).desactualizada, false);
-  const tarde = construirTasa(e, t('2026-11-02T13:01:00Z'));
+  assert.equal(construirTasa(e, t('2026-11-02T21:59:00Z')).desactualizada, false);
+  const tarde = construirTasa(e, t('2026-11-02T22:01:00Z'));
   assert.equal(tarde.desactualizada, true);
   assert.equal(tarde.usd, 455);
   assert.match(tarde.aviso, /no es la tasa oficial/i);
@@ -109,7 +109,8 @@ test('ejecución completa: escribe archivos, sobrevive a fallos y a datos dañad
   assert.equal(r.resultado, 'error');
   tasa = JSON.parse(await readFile(join(dir, 'publico', 'tasa.json'), 'utf8'));
   assert.equal(tasa.usd, 455);
-  assert.equal(tasa.desactualizada, true);
+  assert.equal(tasa.desactualizada, false, 'a las 4 h todavía no se marca (umbral 12 h)');
+  assert.equal(construirTasa(r.estado, t('2026-11-03T03:00:00Z')).desactualizada, true, 'a las 13 h sí');
 
   // Sin token: no rompe nada.
   assert.equal((await ejecutar({ token: '', ahora: t('2026-11-02T19:00:00Z') })).resultado, 'sin_token');
